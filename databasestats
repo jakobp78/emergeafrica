@@ -1,0 +1,138 @@
+# Load the packages
+library(sqldf)
+library(gsubfn)
+library(proto)
+library(RSQLite)
+library(DBI)
+library(tcltk)
+#library(ggplot2)
+
+#import and read data file - remember libraries
+mydata=read.csv("emergeafricaDB.csv")
+
+#Separate all into subsets based on year 2012 2013 2014 2015
+#sqldf(‘select age, count(*) from titanic3 where age is not null group by age’)
+table2012<-sqldf("select Mname, Year, Continent from mydata where Year=2012")
+table2013<-sqldf("select Mname, Year, Continent from mydata where Year=2013")
+table2014<-sqldf("select Mname, Year, Continent from mydata where Year=2014")
+table2015<-sqldf("select Mname, Year, Continent from mydata where Year=2015")
+
+#Find distinct values
+table2012unique<-sqldf("select distinct(Mname), Year, Continent from table2012")
+table2013unique<-sqldf("select distinct(Mname), Year, Continent from table2013")
+table2014unique<-sqldf("select distinct(Mname), Year, Continent from table2014")
+table2015unique<-sqldf("select distinct(Mname), Year, Continent from table2015")
+
+#extract African countries
+table2012uniqueAfr<-sqldf("select distinct(Mname), Year, Continent from table2012unique where Continent='Africa'")
+table2013uniqueAfr<-sqldf("select distinct(Mname), Year, Continent from table2013unique where Continent='Africa'")
+table2014uniqueAfr<-sqldf("select distinct(Mname), Year, Continent from table2014unique where Continent='Africa'")
+table2015uniqueAfr<-sqldf("select distinct(Mname), Year, Continent from table2015unique where Continent='Africa'")
+
+#Changing axis in data frame per year
+y2012<-c(nrow(table2012unique),nrow(table2012uniqueAfr))
+y2013<-c(nrow(table2013unique),nrow(table2013uniqueAfr))
+y2014<-c(nrow(table2014unique),nrow(table2014uniqueAfr))
+y2015<-c(nrow(table2015unique),nrow(table2015uniqueAfr))
+dfsignup=data.frame(y2012,y2013,y2014,y2015)
+rownames(dfsignup) = c('All', 'Africa')
+colnames(dfsignup) = c('2012','2013','2014','2015')
+
+#grouped bar chart plot per year
+#colours <- c("red", "orange")
+#barplot(as.matrix(df), main="Overall and African sign-up (Active and non-active)", ylab = "Sign-ups", cex.lab = 1.5, cex.main = 1.4, beside=TRUE, col=colours)
+#legend("topleft", c("All","Africa"), cex=1.3, bty="n", fill=colours)
+
+###summarise unique sign-ups##
+
+growthby2013<-rbind(table2012unique,table2013unique)
+growthby2013<-sqldf("select distinct(Mname) from growthby2013")
+growthby2013<-nrow(growthby2013)
+
+growthby2013Afr<-rbind(table2012uniqueAfr,table2013uniqueAfr)
+growthby2013Afr<-sqldf("select distinct(Mname) from growthby2013Afr")
+growthby2013Afr<-nrow(growthby2013Afr)
+
+growthby2014<-rbind(table2013unique,table2014unique)
+growthby2014<-sqldf("select distinct(Mname) from growthby2014")
+growthby2014<-nrow(growthby2014)
+
+growthby2014Afr<-rbind(table2013uniqueAfr,table2014uniqueAfr)
+growthby2014Afr<-sqldf("select distinct(Mname) from growthby2014Afr")
+growthby2014Afr<-nrow(growthby2014Afr)
+
+growthby2015<-rbind(table2014unique,table2015unique)
+growthby2015<-sqldf("select distinct(Mname) from growthby2015")
+growthby2015<-nrow(growthby2015)
+
+growthby2015Afr<-rbind(table2014uniqueAfr,table2015uniqueAfr)
+growthby2015Afr<-sqldf("select distinct(Mname) from growthby2015Afr")
+growthby2015Afr<-nrow(growthby2015Afr)
+
+#create data frame
+
+y2012<-c(nrow(table2012unique),nrow(table2012uniqueAfr))
+y2013<-c(growthby2013,growthby2013Afr)
+y2014<-c(growthby2014,growthby2014Afr)
+y2015<-c(growthby2015, growthby2015Afr)
+dfgrowth=data.frame(y2012,y2013,y2014,y2015)
+rownames(dfgrowth) = c('All', 'Africa')
+colnames(dfgrowth) = c('2012','2013','2014','2015')
+
+#create grouped for growth
+#grouped bar chart plot
+#colours <- c("red", "orange")
+#barplot(as.matrix(dfgrowth), main="Overall and African sign-up (Active and non-active)", ylab = "Sign-ups", cex.lab = 1.5, cex.main = 1.4, #beside=TRUE, col=colours)
+#legend("topleft", c("All","Africa"), cex=1.3, bty="n", fill=colours)
+
+##activity level##
+#subset data from mydata
+TableActiveUnique2012<-sqldf("select distinct (Mname), Country, Continent from mydata where Year=2012 and Active='x' or 'Active.no.sign.up'='x'")
+TableActiveUnique2013<-sqldf("select distinct (Mname), Country, Continent from mydata where Year=2013 and Active='x' or 'Active.no.sign.up'='x'")
+TableActiveUnique2014<-sqldf("select distinct (Mname), Country, Continent from mydata where Year=2014 and Active='x' or 'Active.no.sign.up'='x'")
+TableActiveUnique2015<-sqldf("select distinct (Mname), Country, Continent from mydata where Year=2015 and Active='x' or 'Active.no.sign.up'='x'")
+
+#subset for Africa
+TableActiveUnique2012Afr<-sqldf("select Mname, Country from TableActiveUnique2012 where Continent='Africa'")
+TableActiveUnique2013Afr<-sqldf("select Mname, Country from TableActiveUnique2013 where Continent='Africa'")
+TableActiveUnique2014Afr<-sqldf("select Mname, Country from TableActiveUnique2014 where Continent='Africa'")
+TableActiveUnique2015Afr<-sqldf("select Mname, Country from TableActiveUnique2015 where Continent='Africa'")
+
+#Dataframe for activity - non-accumulative
+y2012<-c(nrow(TableActiveUnique2012),nrow(TableActiveUnique2012Afr))
+y2013<-c(nrow(TableActiveUnique2013),nrow(TableActiveUnique2013Afr))
+y2014<-c(nrow(TableActiveUnique2014),nrow(TableActiveUnique2014Afr))
+y2015<-c(nrow(TableActiveUnique2015),nrow(TableActiveUnique2015Afr))
+dfactive=data.frame(y2012,y2013,y2014,y2015)
+rownames(dfactive) = c('All', 'Africa')
+colnames(dfactive) = c('2012','2013','2014','2015')
+
+###summarise unique active##
+
+ActiveGrowthby2013<-rbind(TableActiveUnique2012,TableActiveUnique2013)
+ActiveGrowthby2013<-nrow(ActiveGrowthby2013)
+
+ActiveGrowthby2014<-rbind(TableActiveUnique2013,TableActiveUnique2014)
+ActiveGrowthby2014<-nrow(ActiveGrowthby2014)
+
+ActiveGrowthby2015<-rbind(TableActiveUnique2014,TableActiveUnique2015)
+ActiveGrowthby2015<-nrow(ActiveGrowthby2015)
+
+ActiveGrowthby2013Afr<-rbind(TableActiveUnique2012Afr,TableActiveUnique2013Afr)
+ActiveGrowthby2013Afr<-nrow(ActiveGrowthby2013Afr)
+
+ActiveGrowthby2014Afr<-rbind(TableActiveUnique2013Afr,TableActiveUnique2014Afr)
+ActiveGrowthby2014Afr<-nrow(ActiveGrowthby2014Afr)
+
+ActiveGrowthby2015Afr<-rbind(TableActiveUnique2014Afr,TableActiveUnique2015Afr)
+ActiveGrowthby2015Afr<-nrow(ActiveGrowthby2015Afr)
+
+#create data frame for active growth
+
+y2012<-c(nrow(TableActiveUnique2012),nrow(TableActiveUnique2012Afr))
+y2013<-c(ActiveGrowthby2013,ActiveGrowthby2013Afr)
+y2014<-c(ActiveGrowthby2014,ActiveGrowthby2014Afr)
+y2015<-c(ActiveGrowthby2015, ActiveGrowthby2015Afr)
+dfactivegrowth=data.frame(y2012,y2013,y2014,y2015)
+rownames(dfactivegrowth) = c('All', 'Africa')
+colnames(dfactivegrowth) = c('2012','2013','2014','2015')
