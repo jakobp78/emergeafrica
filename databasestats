@@ -147,7 +147,8 @@ colnames(dfeventdata_merge)=c('merged')
 #select distict
 eventdataDistict<-sqldf("select distinct (merged) from dfeventdata_merge")
 
-#split table
+#split table - requires tidyr
+eventdataSplit<-separate(data=dfeventdata_merge, col=merged, into=c("Name","Event"), sep="\\|")
 
 
 
