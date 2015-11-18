@@ -139,15 +139,15 @@ colnames(dfactivegrowth) = c('2012','2013','2014','2015')
 
 ###Active in specific number of events###
 
-#subset data name, event activity
 eventdata<-sqldf("select Mname, Event, Active, 'Active.no.sign.up' from mydata")
+eventdata_merge<-paste(eventdata$Mname, eventdata$Event, sep="|")
+dfeventdata_merge=data.frame(eventdata_merge)
+colnames(dfeventdata_merge)=c('merged')
 
-#consolidate data to unique active non-active
-eventdataUnique<-sqldf("select distinct (Mname, Event) from eventdata")
-# Extract data with person name and number of events
-PersonNumberofEvents<-table(eventdataUnique$Mname)
-PersonNumberofEvents<-data.frame(PersonNumberofEvents)
-colnames(PersonNumberofEvents)=c('Name','Events')
+#select distict
+eventdataDistict<-sqldf("select distinct (merged) from dfeventdata_merge")
+
+#split table
 
 
 
