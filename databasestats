@@ -5,6 +5,7 @@ library(proto)
 library(RSQLite)
 library(DBI)
 library(tcltk)
+library(tidyr)
 #library(ggplot2)
 
 #import and read data file - remember libraries
@@ -149,6 +150,15 @@ eventdataDistict<-sqldf("select distinct (merged) from dfeventdata_merge")
 
 #split table - requires tidyr
 eventdataSplit<-separate(data=dfeventdata_merge, col=merged, into=c("Name","Event"), sep="\\|")
+
+#make list of signups per event
+SignupForNumberEvents<-table(eventdataSplit$Name)
+SignupForNumberEvents=data.frame(SignupForNumberEvents)
+colnames(SignupForNumberEvents)=c("Name","Event")
+
+SignUpMoreThenOne<-sqldf("select Name, Event from SignupForNumberEvents where Event > 1")
+
+
 
 
 
