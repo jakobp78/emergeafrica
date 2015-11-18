@@ -157,6 +157,7 @@ SignupForNumberEvents=data.frame(SignupForNumberEvents)
 colnames(SignupForNumberEvents)=c("Name","Event")
 
 SignUpMoreThenOne<-sqldf("select Name, Event from SignupForNumberEvents where Event > 1")
+#nrow count
 
 
 
