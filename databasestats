@@ -149,7 +149,7 @@ colnames(dfeventdata_merge)=c('merged')
 eventdataDistict<-sqldf("select distinct (merged) from dfeventdata_merge")
 
 #split table - requires tidyr
-eventdataSplit<-separate(data=dfeventdata_merge, col=merged, into=c("Name","Event"), sep="\\|")
+eventdataSplit<-separate(data=eventdataDistinct, col=merged, into=c("Name","Event"), sep="\\|")
 
 #make list of signups per event
 SignupForNumberEvents<-table(eventdataSplit$Name)
@@ -173,6 +173,46 @@ SignUpMoreThanSix<-nrow(SignUpMoreThanSix)
 SignUpNumberEventsTable=data.frame(SignUpMoreThanOne,SignUpMoreThanTwo,SignUpMoreThanThree,SignUpMoreThanFour,SignUpMoreThanFive,SignUpMoreThanSix)
 colnames(SignUpNumberEventsTable)=c('More than one','More than two','More than three','More than four','More than five','More than six')
 rownames(SignUpNumberEventsTable)=c('Signups')
+
+##Get number of members active in event##
+#subset 
+eventdataActive<-sqldf("select Mname, Event from mydata where Active='x' or 'Active.no.sign.up'='x'")
+
+eventdataActive_merge<-paste(eventdataActive$Mname, eventdataActive$Event, sep="|")
+dfeventdataActive_merge=data.frame(eventdataActive_merge)
+colnames(dfeventdataActive_merge)=c('merged')
+
+#select distict
+eventdataActiveDistict<-sqldf("select distinct (merged) from dfeventdataActive_merge")
+
+#split table - requires tidyr
+eventdataActiveSplit<-separate(data=eventdataActiveDistict, col=merged, into=c("Name","Event"), sep="\\|")
+
+#make list of signups per event
+ActiveInNumberEvents<-table(eventdataActiveSplit$Name)
+ActiveInNumberEvents=data.frame(ActiveInNumberEvents)
+colnames(ActiveInNumberEvents)=c("Name","Event")
+
+ActiveInMoreThanOne<-sqldf("select Name, Event from ActiveInNumberEvents where Event > 1")
+ActiveInMoreThanOne<-nrow(ActiveInMoreThanOne)
+ActiveInMoreThanTwo<-sqldf("select Name, Event from ActiveInNumberEvents where Event > 2")
+ActiveInMoreThanTwo<-nrow(ActiveInMoreThanTwo)
+ActiveInMoreThanThree<-sqldf("select Name, Event from ActiveInNumberEvents where Event > 3")
+ActiveInMoreThanThree<-nrow(ActiveInMoreThanThree)
+ActiveInMoreThanFour<-sqldf("select Name, Event from ActiveInNumberEvents where Event > 4")
+ActiveInMoreThanFour<-nrow(ActiveInMoreThanFour)
+ActiveInMoreThanFive<-sqldf("select Name, Event from ActiveInNumberEvents where Event > 5")
+ActiveInMoreThanFive<-nrow(ActiveInMoreThanFive)
+ActiveInMoreThanSix<-sqldf("select Name, Event from ActiveInNumberEvents where Event > 6")
+ActiveInMoreThanSix<-nrow(ActiveInMoreThanSix)
+
+#Create dataframe for sign ups
+ActiveInNumberEventsTable=data.frame(ActiveInMoreThanOne,ActiveInMoreThanTwo,ActiveInMoreThanThree,ActiveInMoreThanFour,ActiveInMoreThanFive,ActiveInMoreThanSix)
+colnames(ActiveInNumberEventsTable)=c('More than one','More than two','More than three','More than four','More than five','More than six')
+rownames(ActiveInNumberEventsTable)=c('Active')
+
+SignUpActiveInEventCombined<-rbind(SignUpNumberEventsTable,ActiveInNumberEventsTable)
+
 
 
 
