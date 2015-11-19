@@ -156,8 +156,23 @@ SignupForNumberEvents<-table(eventdataSplit$Name)
 SignupForNumberEvents=data.frame(SignupForNumberEvents)
 colnames(SignupForNumberEvents)=c("Name","Event")
 
-SignUpMoreThenOne<-sqldf("select Name, Event from SignupForNumberEvents where Event > 1")
-#nrow count
+SignUpMoreThanOne<-sqldf("select Name, Event from SignupForNumberEvents where Event > 1")
+SignUpMoreThanOne<-nrow(SignUpMoreThanOne)
+SignUpMoreThanTwo<-sqldf("select Name, Event from SignupForNumberEvents where Event > 2")
+SignUpMoreThanTwo<-nrow(SignUpMoreThanTwo)
+SignUpMoreThanThree<-sqldf("select Name, Event from SignupForNumberEvents where Event > 3")
+SignUpMoreThanThree<-nrow(SignUpMoreThanThree)
+SignUpMoreThanFour<-sqldf("select Name, Event from SignupForNumberEvents where Event > 4")
+SignUpMoreThanFour<-nrow(SignUpMoreThanFour)
+SignUpMoreThanFive<-sqldf("select Name, Event from SignupForNumberEvents where Event > 5")
+SignUpMoreThanFive<-nrow(SignUpMoreThanFive)
+SignUpMoreThanSix<-sqldf("select Name, Event from SignupForNumberEvents where Event > 6")
+SignUpMoreThanSix<-nrow(SignUpMoreThanSix)
+
+#Create dataframe for sign ups
+SignUpNumberEventsTable=data.frame(SignUpMoreThanOne,SignUpMoreThanTwo,SignUpMoreThanThree,SignUpMoreThanFour,SignUpMoreThanFive,SignUpMoreThanSix)
+colnames(SignUpNumberEventsTable)=c('More than one','More than two','More than three','More than four','More than five','More than six')
+rownames(SignUpNumberEventsTable)=c('Signups')
 
 
 
