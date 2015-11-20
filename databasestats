@@ -213,7 +213,21 @@ rownames(ActiveInNumberEventsTable)=c('Active')
 
 SignUpActiveInEventCombined<-rbind(SignUpNumberEventsTable,ActiveInNumberEventsTable)
 
+#listtable for all events with month and year
+PeoplePerEvent<-table(eventdataSplit$Event)
+PeoplePerEvent=data.frame(PeoplePerEvent)
+colnames(PeoplePerEvent)=c("Event","Number")
+ListTable<-merge(PeoplePerEvent,sqldf("select distinct (Event), Month, Year from mydata"),by="Event")
 
+
+#Active in events
+ActivePeoplePerEvent<-table(eventdataActiveSplit$Event)
+ActivePeoplePerEvent=data.frame(ActivePeoplePerEvent)
+colnames(ActivePeoplePerEvent)=c("Event","Number")
+ListTable<-merge(ListTable,ActivePeoplePerEvent,by="Event")
+ListTable<-sqldf("select * from ListTable order by Year, Month")
+colnames(ListTable)=c('Event','Sign Up','Month','Year','Active')
+ListTable<-ListTable[c(1,2,5,3,4)]
 
 
 
