@@ -146,7 +146,7 @@ dfeventdata_merge=data.frame(eventdata_merge)
 colnames(dfeventdata_merge)=c('merged')
 
 #select distict
-eventdataDistict<-sqldf("select distinct (merged) from dfeventdata_merge")
+eventdataDistinct<-sqldf("select distinct (merged) from dfeventdata_merge")
 
 #split table - requires tidyr
 eventdataSplit<-separate(data=eventdataDistinct, col=merged, into=c("Name","Event"), sep="\\|")
@@ -212,6 +212,7 @@ colnames(ActiveInNumberEventsTable)=c('More than one','More than two','More than
 rownames(ActiveInNumberEventsTable)=c('Active')
 
 SignUpActiveInEventCombined<-rbind(SignUpNumberEventsTable,ActiveInNumberEventsTable)
+
 
 
 
