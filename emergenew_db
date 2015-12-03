@@ -140,3 +140,40 @@ rownames(ResNumberActive)=c('Signups')
 
 ResSignUpActiveInEventCombined<-rbind(ResNumberSignUp,ResNumberActive)
 rownames(ResSignUpActiveInEventCombined)=c('Sign Up','Active')
+
+###This is not working
+#listtable for all events with month and year
+PeoplePerEvent<-table(EventDataSplit$Event)
+PeoplePerEvent=data.frame(PeoplePerEvent)
+colnames(PeoplePerEvent)=c("Event","Number")
+ListTable<-merge(PeoplePerEvent,subset,by="Event")
+
+
+#Active in events
+ActivePeoplePerEvent<-table(eventdataActiveSplit$Event)
+ActivePeoplePerEvent=data.frame(ActivePeoplePerEvent)
+colnames(ActivePeoplePerEvent)=c("Event","Number")
+ListTable<-merge(ListTable,ActivePeoplePerEvent,by="Event")
+ListTable<-sqldf("select * from ListTable order by Year, Month")
+colnames(ListTable)=c('Event','Sign Up','Month','Year','Active')
+#ListTable<-ListTable[c(1,2,5,3,4)]
+
+#based on media
+EventMediaSite<-sqldf("select Event, Media from mydata where Media='Site'")
+EventMediaSite<-table(EventMediaSite$Event)
+EventMediaSite=data.frame(EventMediaSite)
+colnames(EventMediaSite)=c('Event','Active on site')
+
+EventMediaFB<-sqldf("select Event, Media from mydata where Media='FB'")
+EventMediaFB<-table(EventMediaFB$Event)
+EventMediaFB=data.frame(EventMediaFB)
+colnames(EventMediaFB)=c('Event','Active on FB')
+
+EventMediaAC<-sqldf("select Event, Media from mydata where Media='AC'")
+EventMediaAC<-table(EventMediaAC$Event)
+EventMediaAC=data.frame(EventMediaAC)
+colnames(EventMediaAC)=c('Event','Active in AC')
+
+ListTable<-merge(ListTable,EventMediaSite,by="Event")
+ListTable<-merge(ListTable,EventMediaFB,by="Event")
+ListTable<-merge(ListTable,EventMediaAC,by="Event")
