@@ -251,14 +251,14 @@ ListTable<-merge(ListTable,EventMediaAC,by="Event")
 
 ##country data##
 
-DistinctCountry_all<-sqldf("select distinct (Mname), Country, Year, Continent from mydata")
-DistinctCountry_Africa<-sqldf("select distinct (Mname), Country, Year, Continent from mydata where Continent='Africa'")
+#DistinctCountryAll<-sqldf("select distinct (Mname), Country, Year, Continent from mydata")
+DistinctCountryAfrica<-sqldf("select distinct (Mname), Country, Year, Continent from mydata where Continent='Africa'")
 
-AllCountries=data.frame(table(DistinctCountry_all$Country))
-colnames(AllCountries)=c('Country','Participants')
+#AllCountries=data.frame(table(DistinctCountryAll$Country))
+#colnames(AllCountries)=c('Country','Participants')
 
 ##Der er en fejl her - lande fremstaar med nul deltagere
-AllCountriesAfrica=data.frame(table(DistinctCountry_Africa$Country))
+AllCountriesAfrica=data.frame(table(DistinctCountryAfrica$Country))
 colnames(AllCountriesAfrica)=c('Country','Participants')
 
 
