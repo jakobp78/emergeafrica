@@ -143,7 +143,7 @@ rownames(ResSignUpActiveInEventCombined)=c('Sign Up','Active')
 
 ###This is not working
 #listtable for all events with month and year
-PeoplePerEvent<-table(EventDataSplit$Event)
+PeoplePerEvent<-table(EventDataSplit$Event) #chech with the use of Levels - doesnt seem to list more than 15 events without??
 PeoplePerEvent=data.frame(PeoplePerEvent)
 colnames(PeoplePerEvent)=c("Event","Number")
 ListTable<-merge(PeoplePerEvent,subset,by="Event")
