@@ -1,0 +1,26 @@
+###Emerge Database script##
+Subset data:
+DataPerson
+DataEvent
+DataActivity
+
+##How many were involved in what ever way based on year and location
+
+#Total involvement
+#subsetting:
+SubsetDataActivity<-Subset DataActivity: remove column Media, Activitive, Active.no.sign.up - select
+SubsetDataActivity - make unique
+InvolvementData<-Merge DataPerson with SubsetDataActivity (Continent)
+InvolvementData<-Merge InvolvementData with DataEvent (Date and Year)
+
+RSDataFrameAllInvolveByYear<-table(InvolvementData$Year)
+
+InvolveMentdataforAfrica<-subset(InvolvementData, Continent=='Africa')
+
+RSDataframeAllFromAfrica<-table(InvolveMentdataforAfrica$Year)
+
+RsAllInvolvement<-rbind(InvolveMentdataforAfrica, RSDataframeAllFromAfrica)
+
+Change col and rownames
+
+###Active by location and year
