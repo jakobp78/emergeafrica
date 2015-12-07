@@ -23,4 +23,22 @@ RsAllInvolvement<-rbind(InvolveMentdataforAfrica, RSDataframeAllFromAfrica)
 
 Change col and rownames
 
-###Active by location and year
+###Actively involved by location and year
+
+Subset:
+DataActivity: remove media column
+DataActivity: Subset(DataActivity, Active=='x' | Active.no.sign.up=='x')
+SubsetDataActivity<-merge with DataPerson (get Continent)
+SubsetDataActivity<-merge with DataEvent (get Year)
+
+ActiveAll<-table(subsetDataActivity$Year)
+
+#By location
+
+SubsetDataActivityAfrica<-subset(SubsetDataActivityAfrica, Continent=='Africa')
+ActiveAfrica<-(SubsetDataActivityAfrica)
+
+RsAllActive<-rbind(ActiveAll, ActiveAfrica)
+Change col and rownames
+
+#Combine the two?
