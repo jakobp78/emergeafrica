@@ -1,179 +1,51 @@
-###EmergeAfrica stats extract script v 1.0 - December 2015##
+###Emerge Database script##
+Subset data:
+DataPerson
+DataEvent
+DataActivity
 
-#load Libraries here#
+##How many were involved in what ever way based on year and location
 
-library(tidyr)
+#Total involvement
+#subsetting:
+SubsetDataActivity<-Subset DataActivity: remove column Media, Activitive, Active.no.sign.up - select
+SubsetDataActivity - make unique
+InvolvementData<-Merge DataPerson with SubsetDataActivity (Continent)
+InvolvementData<-Merge InvolvementData with DataEvent (Date and Year)
 
-#Read and subset data here#
-EmergeDB=read.csv("emergeafricaDB.csv")
+RSDataFrameAllInvolveByYear<-table(InvolvementData$Year)
 
-#subset data
-DataByMname<-EmergeDB[unique(EmergeDB$Mname),]
-DataByMnameAfrica<-subset(DataByMname, Continent=="Africa")
-DataByMname2012<-subset(DataByMname, Year==2012)
-DataByMname2013<-subset(DataByMname, Year==2013)
-DataByMname2014<-subset(DataByMname, Year==2014)
-DataByMname2015<-subset(DataByMname, Year==2015)
-DataByMname2012Africa<-subset(DataByMname2012, Continent=="Africa")
-DataByMname2013Africa<-subset(DataByMname2013, Continent=="Africa")
-DataByMname2014Africa<-subset(DataByMname2014, Continent=="Africa")
-DataByMname2015Africa<-subset(DataByMname2015, Continent=="Africa")
+InvolveMentdataforAfrica<-subset(InvolvementData, Continent=='Africa')
 
-#Sign ups and active per year All and Africa - Non-summarised 
-y2012<-c(nrow(DataByMname2012),nrow(DataByMname2012Africa))
-y2013<-c(nrow(DataByMname2013),nrow(DataByMname2013Africa))
-y2014<-c(nrow(DataByMname2014),nrow(DataByMname2014Africa))
-y2015<-c(nrow(DataByMname2015),nrow(DataByMname2015Africa))
-ResSignUps=data.frame(y2012,y2013,y2014,y2015)
-rownames(ResSignUps) = c('All', 'Africa')
-colnames(ResSignUps) = c('2012','2013','2014','2015')
+RSDataframeAllFromAfrica<-table(InvolveMentdataforAfrica$Year)
 
-#summarise unique sign-ups
+RsAllInvolvement<-rbind(InvolveMentdataforAfrica, RSDataframeAllFromAfrica)
 
-SignUpBy2013<-nrow(rbind(DataByMname2012,DataByMname2013))
-SignUpBy2014<-nrow(rbind(DataByMname2013,DataByMname2014))
-SignUpBy2015<-nrow(rbind(DataByMname2014,DataByMname2015))
+Change col and rownames
 
-SignUpBy2013Africa<-nrow(rbind(DataByMname2012Africa,DataByMname2013Africa))
-SignUpBy2014Africa<-nrow(rbind(DataByMname2013Africa,DataByMname2014Africa))
-SignUpBy2015Africa<-nrow(rbind(DataByMname2014Africa,DataByMname2015Africa))
+#summarise
 
-y2012<-c(nrow(DataByMname2012),nrow(DataByMname2012Africa))
-y2013<-c(SignUpBy2013,SignUpBy2013Africa)
-y2014<-c(SignUpBy2014,SignUpBy2014Africa)
-y2015<-c(SignUpBy2015,SignUpBy2015Africa)
-ResSignUpGrowth=data.frame(y2012,y2013,y2014,y2015)
-rownames(ResSignUpGrowth) = c('All', 'Africa')
-colnames(ResSignUpGrowth) = c('2012','2013','2014','2015')
+by2012<-access value
+by2013<-
+by2014
+by2015
 
-#Summarising Active members
+###Actively involved by location and year
 
-#Needed data subsetting for activity 
-DataByMnameActive<-subset(DataByMname, Active=="x" | Active.no.sign.up=="x")
-DataByMnameActiveAfrica<-subset(DataByMnameAfrica, Active=="x" | Active.no.sign.up=="x")
-DataByMnameActive2012<-subset(DataByMnameActive, Year==2012)
-DataByMnameActive2013<-subset(DataByMnameActive, Year==2013)
-DataByMnameActive2014<-subset(DataByMnameActive, Year==2014)
-DataByMnameActive2015<-subset(DataByMnameActive, Year==2015)
-DataByMnameActiveAfrica2012<-subset(DataByMnameActiveAfrica, Year==2012)
-DataByMnameActiveAfrica2013<-subset(DataByMnameActiveAfrica, Year==2013)
-DataByMnameActiveAfrica2014<-subset(DataByMnameActiveAfrica, Year==2014)
-DataByMnameActiveAfrica2015<-subset(DataByMnameActiveAfrica, Year==2015)
+Subset:
+DataActivity: remove media column
+DataActivity: Subset(DataActivity, Active=='x' | Active.no.sign.up=='x')
+SubsetDataActivity<-merge with DataPerson (get Continent)
+SubsetDataActivity<-merge with DataEvent (get Year)
 
+ActiveAll<-table(subsetDataActivity$Year)
 
-y2012<-c(nrow(DataByMnameActive2012),nrow(DataByMnameActiveAfrica2012))
-y2013<-c(nrow(DataByMnameActive2013),nrow(DataByMnameActiveAfrica2013))
-y2014<-c(nrow(DataByMnameActive2014),nrow(DataByMnameActiveAfrica2014))
-y2015<-c(nrow(DataByMnameActive2015),nrow(DataByMnameActiveAfrica2015))
-ResActive=data.frame(y2012,y2013,y2014,y2015)
-rownames(ResActive) = c('All', 'Africa')
-colnames(ResActive) = c('2012','2013','2014','2015')
+#By location
 
-#summarise Active
+SubsetDataActivityAfrica<-subset(SubsetDataActivityAfrica, Continent=='Africa')
+ActiveAfrica<-(SubsetDataActivityAfrica)
 
-ActiveBy2013<-nrow(rbind(DataByMnameActive2012,DataByMnameActive2013))
-ActiveBy2014<-nrow(rbind(DataByMnameActive2013,DataByMnameActive2014))
-ActiveBy2015<-nrow(rbind(DataByMnameActive2014,DataByMnameActive2015))
+RsAllActive<-rbind(ActiveAll, ActiveAfrica)
+Change col and rownames
 
-ActiveBy2013Africa<-nrow(rbind(DataByMnameActiveAfrica2012,DataByMnameActiveAfrica2013))
-ActiveBy2014Africa<-nrow(rbind(DataByMnameActiveAfrica2013,DataByMnameActiveAfrica2014))
-ActiveBy2015Africa<-nrow(rbind(DataByMnameActiveAfrica2014,DataByMnameActiveAfrica2015))
-
-y2012<-c(nrow(DataByMnameActive2012),nrow(DataByMnameActiveAfrica2012))
-y2013<-c(ActiveBy2013,ActiveBy2013Africa)
-y2014<-c(ActiveBy2014,ActiveBy2014Africa)
-y2015<-c(ActiveBy2015,ActiveBy2015Africa)
-ResActiveGrowth=data.frame(y2012,y2013,y2014,y2015)
-rownames(ResActiveGrowth) = c('All', 'Africa')
-colnames(ResActiveGrowth) = c('2012','2013','2014','2015')
-
-#A master table combining?
-###Number and Active in specific number of events###
-
-#Merge data
-EventDataMerged=data.frame(paste(DataByMname$Mname, DataByMname$Event, sep="|"))
-EventDataMerged<-unique(EventDataMerged)
-colnames(EventDataMerged)=c('merged')
-
-#Unmerge data
-EventDataSplit<-separate(data=EventDataMerged, col=merged, into=c("Name","Event"), sep="\\|")
-
-#make list of signups per event
-SignupForNumberEvents=data.frame(table(EventDataSplit$Name))
-colnames(SignupForNumberEvents)=c("Name","Event")
-
-SignUpMoreThanOne<-nrow(subset(SignupForNumberEvents, Event > 1, select = Name:Event))
-SignUpMoreThanTwo<-nrow(subset(SignupForNumberEvents, Event > 2, select = Name:Event))
-SignUpMoreThanThree<-nrow(subset(SignupForNumberEvents, Event > 3, select = Name:Event))
-SignUpMoreThanFour<-nrow(subset(SignupForNumberEvents, Event > 4, select = Name:Event))
-SignUpMoreThanFive<-nrow(subset(SignupForNumberEvents, Event > 5, select = Name:Event))
-SignUpMoreThanSix<-nrow(subset(SignupForNumberEvents, Event > 6, select = Name:Event))
-
-ResNumberSignUp=data.frame(SignUpMoreThanOne,SignUpMoreThanTwo,SignUpMoreThanThree,SignUpMoreThanFour,SignUpMoreThanFive,SignUpMoreThanSix)
-colnames(ResNumberSignUp)=c('More than one','More than two','More than three','More than four','More than five','More than six')
-rownames(ResNumberSignUp)=c('Signups')
-
-
-#Active
-#Merge data
-ActiveEventDataMerged=data.frame(paste(DataByMnameActive$Mname, DataByMnameActive$Event, sep="|"))
-ActiveEventDataMerged<-unique(ActiveEventDataMerged)
-colnames(ActiveEventDataMerged)=c('merged')
-
-#Unmerge data
-ActiveEventDataSplit<-separate(data=ActiveEventDataMerged, col=merged, into=c("Name","Event"), sep="\\|")
-
-#make list of signups per event
-ActiveNumberEvents=data.frame(table(ActiveEventDataSplit$Name))
-colnames(ActiveNumberEvents)=c("Name","Event")
-
-ActiveMoreThanOne<-nrow(subset(ActiveNumberEvents, Event > 1, select = Name:Event))
-ActiveMoreThanTwo<-nrow(subset(ActiveNumberEvents, Event > 2, select = Name:Event))
-ActiveMoreThanThree<-nrow(subset(ActiveNumberEvents, Event > 3, select = Name:Event))
-ActiveMoreThanFour<-nrow(subset(ActiveNumberEvents, Event > 4, select = Name:Event))
-ActiveMoreThanFive<-nrow(subset(ActiveNumberEvents, Event > 5, select = Name:Event))
-ActiveMoreThanSix<-nrow(subset(ActiveNumberEvents, Event > 6, select = Name:Event))
-
-ResNumberActive=data.frame(ActiveMoreThanOne,ActiveMoreThanTwo,ActiveMoreThanThree,ActiveMoreThanFour,ActiveMoreThanFive,ActiveMoreThanSix)
-colnames(ResNumberActive)=c('More than one','More than two','More than three','More than four','More than five','More than six')
-rownames(ResNumberActive)=c('Signups')
-
-ResSignUpActiveInEventCombined<-rbind(ResNumberSignUp,ResNumberActive)
-rownames(ResSignUpActiveInEventCombined)=c('Sign Up','Active')
-
-###This is not working
-#listtable for all events with month and year
-PeoplePerEvent<-table(EventDataSplit$Event) #chech with the use of Levels - doesnt seem to list more than 15 events without??
-PeoplePerEvent=data.frame(PeoplePerEvent)
-colnames(PeoplePerEvent)=c("Event","Number")
-ListTable<-merge(PeoplePerEvent,subset,by="Event")
-
-
-#Active in events
-ActivePeoplePerEvent<-table(eventdataActiveSplit$Event)
-ActivePeoplePerEvent=data.frame(ActivePeoplePerEvent)
-colnames(ActivePeoplePerEvent)=c("Event","Number")
-ListTable<-merge(ListTable,ActivePeoplePerEvent,by="Event")
-ListTable<-sqldf("select * from ListTable order by Year, Month")
-colnames(ListTable)=c('Event','Sign Up','Month','Year','Active')
-#ListTable<-ListTable[c(1,2,5,3,4)]
-
-#based on media
-EventMediaSite<-sqldf("select Event, Media from mydata where Media='Site'")
-EventMediaSite<-table(EventMediaSite$Event)
-EventMediaSite=data.frame(EventMediaSite)
-colnames(EventMediaSite)=c('Event','Active on site')
-
-EventMediaFB<-sqldf("select Event, Media from mydata where Media='FB'")
-EventMediaFB<-table(EventMediaFB$Event)
-EventMediaFB=data.frame(EventMediaFB)
-colnames(EventMediaFB)=c('Event','Active on FB')
-
-EventMediaAC<-sqldf("select Event, Media from mydata where Media='AC'")
-EventMediaAC<-table(EventMediaAC$Event)
-EventMediaAC=data.frame(EventMediaAC)
-colnames(EventMediaAC)=c('Event','Active in AC')
-
-ListTable<-merge(ListTable,EventMediaSite,by="Event")
-ListTable<-merge(ListTable,EventMediaFB,by="Event")
-ListTable<-merge(ListTable,EventMediaAC,by="Event")
+#summarise
