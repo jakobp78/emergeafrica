@@ -23,6 +23,35 @@ RsAllInvolvement<-rbind(InvolveMentdataforAfrica, RSDataframeAllFromAfrica)
 
 Change col and rownames
 
+#summarise
+#subset
+
+by2012<-unique(subset(InvolvementData,Year=2012, select: Mname))
+by2013<-rbind(by2012, subset(InvolvementData,Year=2013, select: Mname))
+by2013<-unique(by2013)
+by2014<-rbind(by2013, subset(InvolvementData,Year=2014, select: Mname))
+by2014<-unique(by2014)
+by2015<-rbind(by2014, subset(InvolvementData,Year=2015, select: Mname))
+by2015<-unique(by2015)
+
+SumInvolmentPerYear=data.frame(c(nrow(by2012),nrow(by2013),nrow(by2014),nrow(by2015))
+SumInvolvement=c('2012','2013','2014','2015')
+
+#summarise for africa
+
+by2012<-unique(subset(InvolveMentdataforAfrica,Year=2012))
+by2013<-rbind(by2012, subset(InvolveMentdataforAfrica,Year=2013))
+by2013<-unique(by2013)
+by2014<-rbind(by2013, subset(InvolveMentdataforAfrica,Year=2014))
+by2014<-unique(by2014)
+by2015<-rbind(by2014, subset(InvolveMentdataforAfrica,Year=2015))
+by2015<-unique(by2015)
+
+SumInvolmentPerYearAfrica=data.frame(c(nrow(by2012),nrow(by2013),nrow(by2014),nrow(by2015))
+SumInvolvement=c('2012','2013','2014','2015')
+
+#make sure there are no confusion using same variable names
+
 ###Actively involved by location and year
 
 Subset:
@@ -41,4 +70,178 @@ ActiveAfrica<-(SubsetDataActivityAfrica)
 RsAllActive<-rbind(ActiveAll, ActiveAfrica)
 Change col and rownames
 
-#Combine the two?
+#summarise activity 
+
+#subset
+
+by2012<-unique(subset(SubsetDataActivity,Year=2012,select: Mname))
+by2013<-rbind(by2012, subset(SubsetDataActivity,Year=2013, select: Mname))
+by2013<-unique(by2013)
+by2014<-rbind(by2013, subset(SubsetDataActivity,Year=2014,select: Mname))
+by2014<-unique(by2014)
+by2015<-rbind(by2014, subset(SubsetDataActivity,Year=2015, select: Mname))
+by2015<-unique(by2015)
+
+SumInvolmentPerYear=data.frame(c(nrow(by2012),nrow(by2013),nrow(by2014),nrow(by2015))
+SumInvolvement=c('2012','2013','2014','2015')
+
+#summarise for africa
+
+by2012<-unique(subset(ActiveAfrica,Year=2012))
+by2013<-rbind(by2012, subset(ActiveAfrica,Year=2013))
+by2013<-unique(by2013)
+by2014<-rbind(by2013, subset(ActiveAfrica,Year=2014))
+by2014<-unique(by2014)
+by2015<-rbind(by2014, subset(ActiveAfrica,Year=2015))
+by2015<-unique(by2015)
+
+SumInvolmentPerYearAfrica=data.frame(c(nrow(by2012),nrow(by2013),nrow(by2014),nrow(by2015))
+SumInvolvement=c('2012','2013','2014','2015')
+
+#make sure there are no confusion using same variable names
+
+###Signed up and Active in number of events###
+
+#Signedup
+#subset
+DataNumberofEvents<-subset(DataActivity, select: Mname, Event)
+DataNumberofEvents<-unique(DataNumberofEvents)
+
+TablePplInEvents=data.frame(table(DataNumberofEvents$Mname))
+
+OneOrMore<-subset(TablePplInEvents,Freq > 0)
+OneOrMore<-nrow(OneOrMore)
+
+TwoOrMore<-subset(TablePplInEvents,Freq >= 2)
+TwoOrMore<-nrow(TwoOrMore)
+
+ThreeOrMore<-subset(TablePplInEvents,Freq >= 3)
+ThreeOrMore<-nrow(ThreeOrMore)
+
+FourOrMore<-subset(TablePplInEvents,Freq >= 4)
+FourOrMore<-nrow(FourOrMore)
+
+FiveOrMore<-subset(TablePplInEvents,Freq >= 5)
+FiveOrMore<-nrow(FiveOrMore)
+
+RsPplInNumberEvents=data.frame(c('OneOrMore','TwoOrMore','ThreeOrMore','FourOrMore','FiveOrMore'))
+col and rownames
+
+#Active
+#subset
+DataNumberofEventsActive<-subset(DataActivity, Active='x' | Active.no.sign.up='x', select: Mname, Event)
+DataNumberofEventsActive<-unique(DataNumberofEventsActive)
+
+TablePplActiveInEvents=data.frame(table(DataNumberofEventsActive$Mname))
+
+OneOrMore<-subset(TablePplActiveInEvents,Freq > 0)
+OneOrMore<-nrow(OneOrMore)
+
+TwoOrMore<-subset(TablePplActiveInEvents,Freq >= 2)
+TwoOrMore<-nrow(TwoOrMore)
+
+ThreeOrMore<-subset(TablePplActiveInEvents,Freq >= 3)
+ThreeOrMore<-nrow(ThreeOrMore)
+
+FourOrMore<-subset(TablePplActiveInEvents,Freq >= 4)
+FourOrMore<-nrow(FourOrMore)
+
+FiveOrMore<-subset(TablePplActiveInEvents,Freq >= 5)
+FiveOrMore<-nrow(FiveOrMore)
+
+RsActiveInNumberEvents=data.frame(c('OneOrMore','TwoOrMore','ThreeOrMore','FourOrMore','FiveOrMore'))
+col and rownames
+
+#Check there are no problems with shared variable names
+
+RsActiveAndSignUp=data.frame(rbind...
+
+###List table for all events
+#Event, Sign Up, Active;Site, Active: FB, Active: AC, Month and Year 
+#subset
+AllEventsSignUp<-subset(DataActivity,select:Mname,Event)
+AllEventsSignUp<-unique(AllEventsSignUp)
+AllEventsSignUp=data.frame(table(AllEventsSignUp$Event)) #First table with sign up data
+
+AllEventsActive<-subset(DataActivity, Active="x" | Active.no.sign.up="x")
+SubsetSite<-subset(AllEventsActive, Media=='Site', select=c('Mname','Event'))
+SubsetSite=data.frame(table(SubsetSite$Event)
+colnames(SubsetSite)=c('Mname','Active in Forum')
+SubsetFB<-subset(AllEventsActive, Media=='FB', select=c('Mname','Event'))
+SubsetFB=data.frame(table(SubsetFB$Event)
+colnames(SubsetFB)=c('Mname','Active on Facebook')
+SubsetAC<-subset(AllEventsActive, Media=='AC', select=c('Mname','Event'))
+SubsetAC=data.frame(table(SubsetAC$Event)
+colnames(SubsetFB)=c('Mname','Adobe Connect')
+
+#hmm important to check if zero values are left out or included - if no data for one cell an entire row may be left out at merge
+
+AllEvents<-merge(AllEventsSignUp, SubsetSite,by=c('Event','Mname')) #ckeck if by statement is correct
+AllEvents<-merge(AllEvents,SubsetFB,by=c('Event','Mname'))
+AllEvents<-merge(AllEvents,SubsetAC,by=c('Event','Mname'))
+
+EventDate<-subset(DataEvent, select: Event, Month, Year)
+
+AllEvents<-merge(AllEvents, EventDate, by='Event')
+
+#Reorder table column order and date
+
+###Country data - correct errors in this section problems with variables
+#subset need - country continent, year 
+CountryDataAll<-unique(subset(DataActivity, select: Mname, Event))
+SubsetDataPerson<-(DataPerson, select: Mname, Country, Continent)
+SubsetEventData<-subset(DataEvent,select: Event, Year)
+
+CountryDataAll<-merge(CountryDataAll,SubsetDataPerson, by=c('Mname','Event'))
+CountryDataAll<-merge(CountryDataAll,SubsetEventData,by='Event')
+
+#check dataframe check colnames are correct
+
+AllCountries<-unique(subset(CountryDataAll, select=c(Mname,Country,Year)))
+AllCountries=data.frame(table(AllCountries$Country))
+
+#All countries Africa
+#subset
+AllCountriesAfrica<-subset(AllCountries, Continent=='Africa', Select: Mname,Country, Year)
+AllCountriesAfrica=data.frame(table(AllCountriesAfrica$Country))
+
+#Subset further if other than african countries are showing as 0
+
+#All countries per year
+
+Countriesby2012list<-subset(CountryDataAll, Year=2012, select: Mname, Country)
+Countriesby2012=data.frame(table(Countriesby2012list$Country))
+
+Countriesby2013list<-rbind(Countriesby2012list, subset(CountryDataAll, Year=2013, select: Mname, Country))
+Countriesby2013list<-unique(Countriesby2013list))
+Countriesby2013=data.frame(table(Countriesby2013list$Country))
+
+Countriesby2014list<-rbind(Countriesby2013list, subset(CountryDataAll, Year=2014, select: Mname, Country))
+Countriesby2014list<-unique(Countriesby2014list))
+Countriesby2014=data.frame(table(Countriesby2014list$Country))
+
+Countriesby2015list<-rbind(Countriesby2014list, subset(CountryDataAll, Year=2015, select: Mname, Country))
+Countriesby2015list<-unique(Countriesby2015list))
+Countriesby2015=data.frame(table(Countriesby2015list$Country))
+
+#African countries by year 
+
+AfricanCountriesby2012list<-subset(AllCountriesAfrica, Year=2012, select: Mname, Country)
+Countriesby2012=data.frame(table(Countriesby2012list$Country))
+
+Countriesby2013list<-rbind(Countriesby2012list, subset(CountryDataAll, Year=2013, select: Mname, Country))
+Countriesby2013list<-unique(Countriesby2013list))
+Countriesby2013=data.frame(table(Countriesby2013list$Country))
+
+Countriesby2014list<-rbind(Countriesby2013list, subset(CountryDataAll, Year=2014, select: Mname, Country))
+Countriesby2014list<-unique(Countriesby2014list))
+Countriesby2014=data.frame(table(Countriesby2014list$Country))
+
+Countriesby2015list<-rbind(Countriesby2014list, subset(CountryDataAll, Year=2015, select: Mname, Country))
+Countriesby2015list<-unique(Countriesby2015list))
+Countriesby2015=data.frame(table(Countriesby2015list$Country))
+
+
+Dataframe to put it all together
+ All countries by year: Country 2012 2013 2014 2015
+African countries by year: Country 2012 2013 2014 2015
