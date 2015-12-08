@@ -5,3 +5,8 @@
 
 #Read CSV data
 EmergeDB=read.csv("emergeafricaDB.csv")
+
+#Subset main data frames
+DataPerson<-unique(subset(EmergeDB,select=c(Mname, Name, Surname, Country, Institution, Continent)))#Duplicates due to errors in dataset
+#DataEvent
+#DataActivity
