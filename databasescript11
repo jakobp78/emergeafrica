@@ -8,5 +8,188 @@ EmergeDB=read.csv("emergeafricaDB.csv")
 
 #Subset main data frames
 DataPerson<-unique(subset(EmergeDB,select=c(Mname, Name, Surname, Country, Institution, Continent)))#Duplicates due to errors in dataset
-#DataEvent
-#DataActivity
+DataEvent<-unique(subset(EmergeDB,select=c(Event, Month, Year)))
+DataActivity<-subset(EmergeDB, select=c(Mname, Event, Active, Active.no.sign.up, Media))
+
+##How many were involved in what ever way based on year and location
+
+#Involvement & sign up all
+#subsetting:
+SsIsuData<-unique(subset(DataActivity, select=c(Mname,Event)))
+SsIsuData<-merge(subset(DataPerson, select=c(Mname,Continent)),SsIsuData, by='Mname')
+SsIsuData<-merge(SsIsuData, subset(DataEvent,select=c(Event,Year)),by='Event')
+
+RSIsuAll=data.frame(table(SsIsuData$Year))
+colnames(RSIsuAll)=c('Year','All') #need to change axis?
+
+SsIsuDataAfrica<-subset(SsIsuData, Continent=='Africa')
+
+RSIsuAfrica=data.frame(table(SsIsuDataAfrica$Year))
+colnames(RSIsuAfrica)=c('Year','Africa') #need to change axis?
+
+RSIsuTotal<-merge(RSIsuAll,RSIsuAfrica,by='Year')
+
+#Summarise Involvement and sign up
+
+by2012<-unique(subset(SsIsuData,Year==2012, select=c(Mname)))
+by2013<-rbind(by2012, subset(SsIsuData,Year==2013, select=c(Mname)))
+by2013<-unique(by2013)
+by2014<-rbind(by2013, subset(SsIsuData,Year==2014, select=c(Mname)))
+by2014<-unique(by2014)
+by2015<-rbind(by2014, subset(SsIsuData,Year==2015, select=c(Mname)))
+by2015<-unique(by2015)
+
+RSIsuSumAll=data.frame(c(nrow(by2012),nrow(by2013),nrow(by2014),nrow(by2015))) # dataframe looks funny -reformat if needed
+rownames(RSIsuSumAll)=c('2012','2013','2014','2015')
+
+#summarise for Africa
+
+by2012<-unique(subset(SsIsuDataAfrica,Year==2012, select=c(Mname)))
+by2013<-rbind(by2012, subset(SsIsuDataAfrica,Year==2013, select=c(Mname)))
+by2013<-unique(by2013)
+by2014<-rbind(by2013, subset(SsIsuDataAfrica,Year==2014, select=c(Mname)))
+by2014<-unique(by2014)
+by2015<-rbind(by2014, subset(SsIsuDataAfrica,Year==2015, select=c(Mname)))
+by2015<-unique(by2015)
+
+RSIsuSumAllAfrica=data.frame(c(nrow(by2012),nrow(by2013),nrow(by2014),nrow(by2015))) # dataframe looks funny -reformat if needed
+rownames(RSIsuSumAll)=c('2012','2013','2014','2015')
+
+#All together
+RSIsuSumAll<-rbind(RSIsuSumAll,RSIsuSumAllAfrica) #rework dataframe to make work correctly
+
+###Actively involved  location and year
+
+SsAlyData<-unique(subset(DataActivity, Active=='x' | Active.no.sign.up=='x', select=c(Mname,Event)))
+SsAlyData<-merge(subset(DataPerson, select=c(Mname,Continent)),SsAlyData, by='Mname')
+SsAlyData<-merge(SsAlyData, subset(DataEvent,select=c(Event,Year)),by='Event') #discrepancy due to data set errors 
+
+RSActiveAll=data.frame(table(SsAlyData$Year))
+colnames(RSActiveAll)=c("Year","All") #check if axis need to be turned
+
+
+SsAlyDataAfrica<-subset(SsAlyData, Continent=='Africa')
+RSActiveAfrica=data.frame(table(SsAlyDataAfrica$Year))
+colnames(RSActiveAfrica)=c("Year","Africa") #check if axis need to be turned
+#Africa and all merged
+RsAllActive<-merge(RSActiveAll,RSActiveAfrica,by='Year')
+
+#summarise activity 
+
+#Summarise Active for all and Africa
+
+by2012<-unique(subset(SsAlyData,Year==2012, select=c(Mname)))
+by2013<-rbind(by2012, subset(SsAlyData,Year==2013, select=c(Mname)))
+by2013<-unique(by2013)
+by2014<-rbind(by2013, subset(SsAlyData,Year==2014, select=c(Mname)))
+by2014<-unique(by2014)
+by2015<-rbind(by2014, subset(SsAlyData,Year==2015, select=c(Mname)))
+by2015<-unique(by2015)
+
+RSAlyAllSum=data.frame(c(nrow(by2012),nrow(by2013),nrow(by2014),nrow(by2015))) # dataframe looks funny -reformat if needed
+rownames(RSAlyAllSum)=c('2012','2013','2014','2015')
+
+#Africa
+by2012<-unique(subset(SsAlyDataAfrica,Year==2012, select=c(Mname)))
+by2013<-rbind(by2012, subset(SsAlyDataAfrica,Year==2013, select=c(Mname)))
+by2013<-unique(by2013)
+by2014<-rbind(by2013, subset(SsAlyDataAfrica,Year==2014, select=c(Mname)))
+by2014<-unique(by2014)
+by2015<-rbind(by2014, subset(SsAlyDataAfrica,Year==2015, select=c(Mname)))
+by2015<-unique(by2015)
+
+RSAlyAfricaSum=data.frame(c(nrow(by2012),nrow(by2013),nrow(by2014),nrow(by2015))) # dataframe looks funny -reformat if needed
+rownames(RSAlyAfricaSum)=c('2012','2013','2014','2015')
+
+#All together
+RSAlySumAll<-rbind(RSAlyAllSum,RSAlyAfricaSum) #rework dataframe to make work correctly
+
+###Signed up and Active in number of events###
+
+#Signedup
+#subset
+DataNumberofEvents<-subset(DataActivity, select=c(Mname, Event))
+DataNumberofEvents<-unique(DataNumberofEvents)
+
+TablePplInEvents=data.frame(table(DataNumberofEvents$Mname))
+
+OneOrMore<-subset(TablePplInEvents,Freq > 0)
+OneOrMore<-nrow(OneOrMore)
+
+TwoOrMore<-subset(TablePplInEvents,Freq >= 2)
+TwoOrMore<-nrow(TwoOrMore)
+
+ThreeOrMore<-subset(TablePplInEvents,Freq >= 3)
+ThreeOrMore<-nrow(ThreeOrMore)
+
+FourOrMore<-subset(TablePplInEvents,Freq >= 4)
+FourOrMore<-nrow(FourOrMore)
+
+FiveOrMore<-subset(TablePplInEvents,Freq >= 5)
+FiveOrMore<-nrow(FiveOrMore)
+
+RsPplInNumberEvents=data.frame(c(OneOrMore,TwoOrMore,ThreeOrMore,FourOrMore,FiveOrMore))
+rownames(RsPplInNumberEvents)=c('One Or More','Two Or More','Three Or More','Four Or More','Five Or More')
+
+#Active
+#subset
+DataNumberofEventsActive<-subset(DataActivity, Active=='x' | Active.no.sign.up=='x', select=c(Mname, Event))
+DataNumberofEventsActive<-unique(DataNumberofEventsActive)
+
+TablePplActiveInEvents=data.frame(table(DataNumberofEventsActive$Mname))
+
+OneOrMore<-subset(TablePplActiveInEvents,Freq > 0)
+OneOrMore<-nrow(OneOrMore)
+
+TwoOrMore<-subset(TablePplActiveInEvents,Freq >= 2)
+TwoOrMore<-nrow(TwoOrMore)
+
+ThreeOrMore<-subset(TablePplActiveInEvents,Freq >= 3)
+ThreeOrMore<-nrow(ThreeOrMore)
+
+FourOrMore<-subset(TablePplActiveInEvents,Freq >= 4)
+FourOrMore<-nrow(FourOrMore)
+
+FiveOrMore<-subset(TablePplActiveInEvents,Freq >= 5)
+FiveOrMore<-nrow(FiveOrMore)
+
+RsActiveInNumberEvents=data.frame(c(OneOrMore,TwoOrMore,ThreeOrMore,FourOrMore,FiveOrMore))
+rownames(RsActiveInNumberEvents)=c('One Or More','Two Or More','Three Or More','Four Or More','Five Or More')
+
+#Rework dataframes and output results together
+
+###List table for all events
+#Event, Sign Up, Active;Site, Active: FB, Active: AC, Month and Year 
+#subset
+AllEventsSignUp<-subset(DataActivity,select=c(Mname,Event))
+AllEventsSignUp<-unique(AllEventsSignUp)
+AllEventsSignUp=data.frame(table(AllEventsSignUp$Event))
+#colnames(  #Fix colnames for Alleventssignup !!
+#First table with sign up data
+
+AllEventsActive<-subset(DataActivity, Active=="x" | Active.no.sign.up=="x")
+SubsetSite<-subset(AllEventsActive, Media=='Site', select=c('Mname','Event'))
+SubsetSite=data.frame(table(SubsetSite$Event)
+colnames(SubsetSite)=c('Mname','Active in Forum')
+SubsetFB<-subset(AllEventsActive, Media=='FB', select=c('Mname','Event'))
+SubsetFB=data.frame(table(SubsetFB$Event)
+colnames(SubsetFB)=c('Mname','Active on Facebook')
+SubsetAC<-subset(AllEventsActive, Media=='AC', select=c('Mname','Event'))
+SubsetAC=data.frame(table(SubsetAC$Event)
+colnames(SubsetFB)=c('Mname','Adobe Connect')
+
+#hmm important to check if zero values are left out or included - if no data for one cell an entire row may be left out at merge
+
+AllEvents<-merge(AllEventsSignUp, SubsetSite,by=c('Event','Mname')) #ckeck if by statement is correct
+AllEvents<-merge(AllEvents,SubsetFB,by=c('Event','Mname'))
+AllEvents<-merge(AllEvents,SubsetAC,by=c('Event','Mname'))
+
+EventDate<-subset(DataEvent, select=c(Event,Month,Year))
+
+AllEvents<-merge(AllEvents, EventDate, by='Event')
+
+#Reorder table column order and date
+
+
+
+
