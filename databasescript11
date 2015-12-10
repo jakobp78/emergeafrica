@@ -161,35 +161,124 @@ rownames(RsActiveInNumberEvents)=c('One Or More','Two Or More','Three Or More','
 ###List table for all events
 #Event, Sign Up, Active;Site, Active: FB, Active: AC, Month and Year 
 #subset
+#First table with sign up data
 AllEventsSignUp<-subset(DataActivity,select=c(Mname,Event))
 AllEventsSignUp<-unique(AllEventsSignUp)
 AllEventsSignUp=data.frame(table(AllEventsSignUp$Event))
-#colnames(  #Fix colnames for Alleventssignup !!
-#First table with sign up data
+colnames(AllEventsSignUp)=c('Event','Sign Up')
 
-AllEventsActive<-subset(DataActivity, Active=="x" | Active.no.sign.up=="x")
-SubsetSite<-subset(AllEventsActive, Media=='Site', select=c('Mname','Event'))
-SubsetSite=data.frame(table(SubsetSite$Event)
-colnames(SubsetSite)=c('Mname','Active in Forum')
-SubsetFB<-subset(AllEventsActive, Media=='FB', select=c('Mname','Event'))
-SubsetFB=data.frame(table(SubsetFB$Event)
-colnames(SubsetFB)=c('Mname','Active on Facebook')
-SubsetAC<-subset(AllEventsActive, Media=='AC', select=c('Mname','Event'))
-SubsetAC=data.frame(table(SubsetAC$Event)
-colnames(SubsetFB)=c('Mname','Adobe Connect')
+#Second table with Active data
+AllEventsActive<-subset(DataActivity, Active=="x" | Active.no.sign.up=="x", select=c(Mname,Event))
+AllEventsActive<-unique(AllEventsActive)
+AllEventsActive=data.frame(table(AllEventsActive$Event))
+colnames(AllEventsActive)=c('Event','Active')
 
-#hmm important to check if zero values are left out or included - if no data for one cell an entire row may be left out at merge
+ListEvents<-merge(AllEventsSignUp,AllEventsActive,by='Event')
 
-AllEvents<-merge(AllEventsSignUp, SubsetSite,by=c('Event','Mname')) #ckeck if by statement is correct
-AllEvents<-merge(AllEvents,SubsetFB,by=c('Event','Mname'))
-AllEvents<-merge(AllEvents,SubsetAC,by=c('Event','Mname'))
+SubsetSite<-subset(DataActivity, Media=='Site', select=c(Mname,Event))
+SubsetSite<-table(SubsetSite$Event)
+SubsetSite=data.frame(SubsetSite)
+colnames(SubsetSite)=c('Event','Active in Forum')
+ListEvents<-merge(ListEvents,SubsetSite,by='Event')
+
+SubsetFB<-subset(DataActivity, Media=='FB', select=c(Mname,Event))
+SubsetFB<-table(SubsetFB$Event)
+SubsetFB=data.frame(SubsetFB)
+colnames(SubsetFB)=c('Event','Active on FB')
+ListEvents<-merge(ListEvents,SubsetFB,by='Event')
+
+SubsetAC<-subset(DataActivity, Media=='AC', select=c(Mname,Event))
+SubsetAC<-table(SubsetAC$Event)
+SubsetAC=data.frame(SubsetAC)
+colnames(SubsetAC)=c('Event','Live Meeting')
+ListEvents<-merge(ListEvents,SubsetAC,by='Event')
+
 
 EventDate<-subset(DataEvent, select=c(Event,Month,Year))
 
-AllEvents<-merge(AllEvents, EventDate, by='Event')
+ListEvents<-merge(ListEvents, EventDate, by='Event')
+#Reorder according to yeas and month
+ListEvents<-ListEvents[order(ListEvents$Year, ListEvents$Month),] #Will be ordered by year but not by month - correct this
 
-#Reorder table column order and date
+###Country data
+
+###Country data - correct errors in this section problems with variables
+#subset need - country continent, year 
+CountryGDDataActivity<-unique(subset(DataActivity, select=c(Mname, Event)))
+SubsetGDDataPerson<-subset(DataPerson, select=c(Mname, Country, Continent))
+SubsetGDEventData<-subset(DataEvent,select=c(Event, Year))
+
+CountryDataAll<-merge(CountryGDDataActivity,SubsetGDDataPerson, by=c('Mname'))
+CountryDataAll<-merge(CountryDataAll,SubsetGDEventData,by='Event')
+
+AllCountries<-unique(subset(CountryDataAll, select=c(Mname,Country,Continent,Year))) #Duplicates dues to errors in dataset
+LsAllCountries=data.frame(table(AllCountries$Country)) #change order
+colnames(LsAllCountries)=c('Country','Number')
+
+#All countries Africa
+#subset
+AllCountriesAfrica<-subset(AllCountries, Continent=='Africa', Select=c(Mname,Country, Year))
+LsAllCountriesAfrica=data.frame(table(AllCountriesAfrica$Country))
+LsAllCountriesAfrica<-subset(LsAllCountriesAfrica,Freq>0)#Subset to avoid 0 countries
+colnames(LsAllCountriesAfrica)=c('Country','Number')
+
+#All countries per year
+
+Countries2012<-subset(CountryDataAll, Year==2012, select=c(Mname, Country))
+LsCountries2012=data.frame(table(Countries2012$Country))
+LsCountries2012<-subset(LsCountries2012,Freq>0)
+colnames(LsCountries2012)=c('Country','Number')
+
+Countries2013<-subset(CountryDataAll, Year==2013, select=c(Mname, Country))
+Countries2013=data.frame(table(Countries2013$Country))
+LsCountries2013<-subset(Countries2013,Freq>0)
+colnames(LsCountries2013)=c('Country','Number')
+
+#LsCountriesby2013<-unique(rbind(LsCountriesby2012,LsCountries2013))
+
+Countries2014<-subset(CountryDataAll, Year==2014, select=c(Mname, Country))
+Countries2014=data.frame(table(Countries2014$Country))
+LsCountries2014<-subset(Countries2014,Freq>0)
+colnames(LsCountries2014)=c('Country','Number')
+
+#LsCountriesby2014<-unique(rbind(LsCountriesby2013,LsCountries2014))
+
+Countries2015<-subset(CountryDataAll, Year==2015, select=c(Mname, Country))
+Countries2015=data.frame(table(Countries2015$Country))
+LsCountries2015<-subset(Countries2015,Freq>0)
+colnames(LsCountries2015)=c('Country','Number')
+
+#LsCountriesby2015<-unique(rbind(LsCountriesby2014,LsCountries2015))
+
+#Summarising countries
 
 
+#Countries by Year Africa
 
+Countries2012Africa<-subset(AllCountriesAfrica, Year==2012, select=c(Mname, Country))
+LsCountriesby2012Africa=data.frame(table(Countries2012Africa$Country))
+LsCountriesby2012Africa<-subset(LsCountriesby2012Africa,Freq>0)
+colnames(LsCountriesby2012Africa)=c('Country','Number')
 
+Countries2013Africa<-subset(AllCountriesAfrica, Year==2013, select=c(Mname, Country))
+Countries2013Africa=data.frame(table(Countries2013Africa$Country))
+LsCountries2013Africa<-subset(Countries2013Africa,Freq>0)
+colnames(LsCountries2013Africa)=c('Country','Number')
+
+#LsCountriesby2013Africa<-unique(rbind(LsCountriesby2012Africa,LsCountries2013Africa))
+
+Countries2014Africa<-subset(AllCountriesAfrica, Year==2014, select=c(Mname, Country))
+Countries2014Africa=data.frame(table(Countries2014Africa$Country))
+LsCountries2014Africa<-subset(Countries2014Africa,Freq>0)
+colnames(LsCountries2014Africa)=c('Country','Number')
+
+#LsCountriesby2014Africa<-unique(rbind(LsCountriesby2013Africa,LsCountries2014Africa))
+
+Countries2015Africa<-subset(AllCountriesAfrica, Year==2015, select=c(Mname, Country))
+Countries2015Africa=data.frame(table(Countries2015Africa$Country))
+LsCountries2015Africa<-subset(Countries2015Africa,Freq>0)
+colnames(LsCountries2015Africa)=c('Country','Number')
+
+#LsCountriesby2015Africa<-unique(rbind(LsCountriesby2014Africa,LsCountries2015Africa))
+#Summarise by rowbinding non-data frame data, make unique then subset with zero
+##End of script10122015##
