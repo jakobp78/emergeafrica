@@ -1,0 +1,11 @@
+#clean script for database#
+#Read CSV data
+EmergeDB=read.csv("emergeafricaDB.csv")
+
+#Subset main data frames
+DataPerson<-unique(subset(EmergeDB,select=c(Mname, Name, Surname, Country, Institution, Continent)))#Duplicates due to errors in dataset
+DataEvent<-unique(subset(EmergeDB,select=c(Event, Month, Year)))
+DataActivity<-subset(EmergeDB, select=c(Mname, Event, Active, Active.no.sign.up, Media))
+
+CleanDataPerson=data.frame(table(DataPerson$Mname))
+CleanPerson<-subset(CleanDataPerson,Freq>1)
